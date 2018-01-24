@@ -1,0 +1,7 @@
+- alias: hasura
+  config:
+    configmap: controller-conf
+    namespace: butane33-hasura
+  data: null
+  kubeContext: butane33
+  name: butane33
