@@ -22,6 +22,10 @@ def zomatoSignup():
     headers = {
     "Content-Type": "application/json"
     }
-    resp = requests.request("POST", url, data=json.dumps(requestPayload), headers=headers).json()
+    resp = requests.request("POST", authUrl, data=json.dumps(requestPayload), headers=headers).json()
     return jsonify({"auth_token" : resp['auth_token']})
+
+if __name__ == '__main__':
+    app.run(threaded = True)
+
 
