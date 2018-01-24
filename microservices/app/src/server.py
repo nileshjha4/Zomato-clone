@@ -1,5 +1,5 @@
 from src import app
-from flask import Flask, render_template, request, make_response, send_file
+from flask import Flask, render_template, request, make_response, send_file,jsonify
 import requests
 import json
 
@@ -23,6 +23,7 @@ def zomatoSignup():
     "Content-Type": "application/json"
     }
     resp = requests.request("POST", authUrl, data=json.dumps(requestPayload), headers=headers).json()
+    print(resp.content)
     return jsonify({"auth_token" : resp['auth_token']})
 
 if __name__ == '__main__':
