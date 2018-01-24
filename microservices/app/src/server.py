@@ -6,7 +6,7 @@ import json
 signupUrl = "https://auth.butane33.hasura-app.io/v1/signup"
 loginUrl = "https://auth.butane33.hasura-app.io/v1/login"
 dataUrl = "https://data.butane33.hasura-app.io/v1/query"
-
+logoutUrl = "https://auth.butane33.hasura-app.io/v1/user/logout"
 
 headers = {
     "Content-Type": "application/json"
@@ -50,6 +50,19 @@ def zomatoLogin():
         return jsonify({"auth_token" : resp['auth_token']})
     except KeyError:
         return jsonify({"message" : resp['message']})
+
+@app.route('/signout/', methods=['POST'])
+def zomatoLogout():
+    userAuth_token = request.get_json()
+    Authorization = "Bearer "+userAuth_token['auth_token']
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": Authorization
+    }
+    resp = requests.request("POST", logoutUrl, headers=headers).json()
+    print(resp)
+    return jsonify({"message" : resp['message']})
+
 
 
 @app.route('/signout/', methods=['POST'])
