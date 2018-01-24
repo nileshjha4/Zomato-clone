@@ -52,6 +52,18 @@ def zomatoLogin():
         return jsonify({"message" : resp['message']})
 
 
+@app.route('/signout/', methods=['POST'])
+def zomatoLogout():
+    Authorization = request.headers.get('Authorization')
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": Authorization
+    }
+    resp = requests.request("POST", logoutUrl, headers=headers).json()
+    print(resp)
+    return jsonify({"message" : resp['message']})
+
+
 if __name__ == '__main__':
     app.run(threaded = True)
 
