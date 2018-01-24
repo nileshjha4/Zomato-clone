@@ -23,7 +23,7 @@ def zomatoSignup():
     "Content-Type": "application/json"
     }
     resp = requests.request("POST", authUrl, data=json.dumps(requestPayload), headers=headers).json()
-    print(resp.content)
+    print(resp)
     return jsonify({"auth_token" : resp['auth_token']})
 
 if __name__ == '__main__':
