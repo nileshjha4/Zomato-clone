@@ -3,28 +3,54 @@ from flask import Flask, render_template, request, make_response, send_file,json
 import requests
 import json
 
-authUrl = "https://auth.butane33.hasura-app.io/v1/signup"
+signupUrl = "https://auth.butane33.hasura-app.io/v1/signup"
+loginUrl = "https://auth.butane33.hasura-app.io/v1/login"
+dataUrl = "https://data.butane33.hasura-app.io/v1/query"
+
+
+headers = {
+    "Content-Type": "application/json"
+}
 
 @app.route("/")
 def home():
     return "Hasura Hello World"
 
-@app.route('/signup', methods=['POST'])
+@app.route('/signup/', methods=['POST'])
 def zomatoSignup():
-    userData = request.get_json()
-    requestPayload = {
+    userSignupData = request.get_json()
+    signupPayload = {
         "provider": "username",
         "data": {
-            "username": userData['username'],
-            "password": userData['username']
+            "username": userSignupData['username'],
+            "password": userSignupData['password']
         }
     }
-    headers = {
-    "Content-Type": "application/json"
+    try:
+        resp = requests.request("POST", signupUrl, data=json.dumps(signupPayload), headers=headers).json()
+        print(resp)
+        return jsonify({"auth_token" : resp['auth_token']})
+    except KeyError:
+        return jsonify({"message" : resp['message']})
+
+
+@app.route('/login/', methods=['POST'])
+def zomatoLogin():
+    userLoginData = request.get_json()
+    loginPayload = {
+        "provider": "username",
+        "data": {
+            "username": userLoginData['username'],
+            "password": userLoginData['password']
+        }
     }
-    resp = requests.request("POST", authUrl, data=json.dumps(requestPayload), headers=headers).json()
-    print(resp)
-    return jsonify({"auth_token" : resp['auth_token']})
+    try:
+        resp = requests.request("POST", loginUrl, data=json.dumps(loginPayload), headers=headers).json()
+        print(resp)
+        return jsonify({"auth_token" : resp['auth_token']})
+    except KeyError:
+        return jsonify({"message" : resp['message']})
+
 
 if __name__ == '__main__':
     app.run(threaded = True)
