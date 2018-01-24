@@ -59,7 +59,7 @@ def zomatoLogout():
         "Content-Type": "application/json",
         "Authorization": Authorization
     }
-    resp = requests.request("POST", url, headers=headers).json()
+    resp = requests.request("POST", logoutUrl, headers=headers).json()
     print(resp)
     return jsonify({"message" : resp['message']})
 
