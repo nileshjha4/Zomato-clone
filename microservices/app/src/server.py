@@ -47,9 +47,9 @@ def zomatoSignup():
                 "table": "users",
                 "objects": [
                     {
-                        " hasura_id " : signupResp['hasura_id'],
-                        " name " : userSignupData['name'] ,
-                        " username " : signupResp['username'] ,
+                        "hasura_id" : signupResp['hasura_id'],
+                        "name" : userSignupData['name'] ,
+                        "username" : signupResp['username'] ,
                     }
                 ]
                 }
