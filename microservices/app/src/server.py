@@ -54,6 +54,7 @@ def zomatoLogin():
 @app.route('/signout/', methods=['POST'])
 def zomatoLogout():
     Authorization = request.headers.get('Authorization')
+    print(Authorization)
     headers = {
         "Content-Type": "application/json",
         "Authorization": Authorization
