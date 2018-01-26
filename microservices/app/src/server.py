@@ -21,6 +21,7 @@ dataHeaders= {
 def home():
     return "Hasura Hello World"
 
+
 @app.route('/signup/', methods=['POST'])
 def zomatoSignup():
     userSignupData = request.get_json()
@@ -33,7 +34,7 @@ def zomatoSignup():
     }
     try:
         signupResp = requests.request("POST", signupUrl, data=json.dumps(signupPayload), headers=headers).json()
-        print(signupResp)
+        print("hasura_id : ",signupResp['hasura_id'],", hasura_roles : ",signupResp['hasura_roles'])
     except KeyError:
         return jsonify({"message" : signupResp['message']})
     else:
@@ -60,7 +61,6 @@ def zomatoSignup():
         return jsonify({"auth_token" : signupResp['auth_token']})
 
 
-
 @app.route('/login/', methods=['POST'])
 def zomatoLogin():
     userLoginData = request.get_json()
@@ -73,7 +73,7 @@ def zomatoLogin():
     }
     try:
         loginResp = requests.request("POST", loginUrl, data=json.dumps(loginPayload), headers=headers).json()
-        print(loginResp)
+        print("hasura_id : ",signupResp['hasura_id'],", hasura_roles : ",signupResp['hasura_roles'])
         return jsonify({"auth_token" : loginResp['auth_token']})
     except KeyError:
         return jsonify({"message" : loginResp['message']})
@@ -81,12 +81,11 @@ def zomatoLogin():
 
 @app.route('/signout/', methods=['POST'])
 def zomatoLogout():
-    Authorization = request.environ['HTTP_AUTHORIZATION']
-    print(Authorization)
-    print(request.headers)
+    logoutToken = request.get_json()
+    if auth_token
     headers = {
         "Content-Type": "application/json",
-        "Authorization": Authorization
+        "Authorization": logoutToken['auth_token']
     }
     print(headers)
     resp = requests.request("POST", logoutUrl, headers=headers).json()
