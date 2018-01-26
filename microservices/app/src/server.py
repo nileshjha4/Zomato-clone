@@ -38,10 +38,6 @@ def zomatoSignup():
     except KeyError:
         return jsonify({"message" : signupResp['message']})
     else:
-        dataHeaders={
-            "Content-Type": "application/json",
-            "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
-        }
         userDataPayload = {
             "type": "insert",
             "args": {
@@ -73,7 +69,7 @@ def zomatoLogin():
     }
     try:
         loginResp = requests.request("POST", loginUrl, data=json.dumps(loginPayload), headers=headers).json()
-        print("hasura_id : ",signupResp['hasura_id'],", hasura_roles : ",signupResp['hasura_roles'])
+        print("hasura_id : ",loginResp['hasura_id'],", hasura_roles : ",loginResp['hasura_roles'])
         return jsonify({"auth_token" : loginResp['auth_token']})
     except KeyError:
         return jsonify({"message" : loginResp['message']})
