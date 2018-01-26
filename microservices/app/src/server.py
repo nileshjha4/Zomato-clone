@@ -81,7 +81,7 @@ def zomatoLogin():
 
 @app.route('/signout/', methods=['POST'])
 def zomatoLogout():
-    Authorization = request.headers['Authorization']
+    Authorization = request.environ['HTTP_AUTHORIZATION']
     print(Authorization)
     print(request.headers)
     headers = {
@@ -96,11 +96,3 @@ def zomatoLogout():
 
 if __name__ == '__main__':
     app.run(threaded = True)
-
-
-try:
-    pass
-except Exception as e:
-    raise e
-else:
-    pass
