@@ -12,6 +12,11 @@ headers = {
     "Content-Type": "application/json"
 }
 
+dataHeaders= {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
+        }
+
 @app.route("/")
 def home():
     return "Hasura Hello World"
@@ -27,11 +32,33 @@ def zomatoSignup():
         }
     }
     try:
-        resp = requests.request("POST", signupUrl, data=json.dumps(signupPayload), headers=headers).json()
-        print(resp)
-        return jsonify({"auth_token" : resp['auth_token']})
+        signupResp = requests.request("POST", signupUrl, data=json.dumps(signupPayload), headers=headers).json()
+        print(signupResp)
     except KeyError:
-        return jsonify({"message" : resp['message']})
+        return jsonify({"message" : signupResp['message']})
+    else:
+        dataHeaders={
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
+        }
+        userDataPayload = {
+            "type": "insert",
+            "args": {
+                "table": "users",
+                "objects": [
+                    {
+                        " hasura_id " : signupResp['hasura_id'],
+                        " name " : userLoginData['name'] ,
+                        " username " : signupResp['username'] ,
+                    }
+                ]
+                }
+            }
+        # Make the query and store response in resp
+        dataResp = requests.request("POST", dataUrl, data=json.dumps(userDataPayload), headers=dataHeaders).json()
+        print(dataResp)
+        return jsonify({"auth_token" : signupResp['auth_token']})
+
 
 
 @app.route('/login/', methods=['POST'])
@@ -45,16 +72,18 @@ def zomatoLogin():
         }
     }
     try:
-        resp = requests.request("POST", loginUrl, data=json.dumps(loginPayload), headers=headers).json()
-        print(resp)
-        return jsonify({"auth_token" : resp['auth_token']})
+        loginResp = requests.request("POST", loginUrl, data=json.dumps(loginPayload), headers=headers).json()
+        print(loginResp)
+        return jsonify({"auth_token" : loginResp['auth_token']})
     except KeyError:
-        return jsonify({"message" : resp['message']})
+        return jsonify({"message" : loginResp['message']})
+    
 
 @app.route('/signout/', methods=['POST'])
 def zomatoLogout():
-    Authorization = request.headers.get('Authorization')
+    Authorization = request.headers['Authorization']
     print(Authorization)
+    print(request.headers)
     headers = {
         "Content-Type": "application/json",
         "Authorization": Authorization
@@ -69,3 +98,9 @@ if __name__ == '__main__':
     app.run(threaded = True)
 
 
+try:
+    pass
+except Exception as e:
+    raise e
+else:
+    pass

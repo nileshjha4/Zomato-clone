@@ -1,0 +1,9 @@
+- args:
+    sql: ALTER TABLE "users" ALTER COLUMN "photo_url" TYPE text;
+  type: run_sql
+- args:
+    sql: ALTER TABLE "users" ALTER COLUMN "photo_url" DROP DEFAULT;
+  type: run_sql
+- args:
+    sql: ALTER TABLE "users" ALTER COLUMN "photo_url" DROP NOT NULL;
+  type: run_sql
