@@ -94,10 +94,10 @@ def zomatoLogout():
 def homeFeed():
     userLocation = request.get_json()
     try:
-        latitudeDown = str(int(userLocation['latitude'])-1.0)
-        latitudeUp = str(int(userLocation['latitude'])+1.0)
-        longitudeDown = str(int(userLocation['longitude'])-1.0)
-        longitudeUp = str(int(userLocation['longitude'])+1.0)
+        latitudeDown = '"' + str(int(userLocation['latitude'])-1.0) + '"'
+        latitudeUp = '"' + str(int(userLocation['latitude'])+1.0) + '"'
+        longitudeDown = '"' + str(int(userLocation['longitude'])-1.0) + '"'
+        longitudeUp = '"' + str(int(userLocation['longitude'])+1.0) + '"'
     except ValueError :
         return jsonify({"message" : "Location not found"})
     locationPayload = {
