@@ -114,12 +114,12 @@ def homeFeed():
                         "$and": [
                             {
                                 "latitude": {
-                                    "$gt": latitudeDown
+                                    "$gt": "19.00"
                                 }
                             },
                             {
                                 "latitude": {
-                                    "$lt": latitudeUp
+                                    "$lt": "20.00"
                                 }
                             }
                         ]
@@ -128,12 +128,12 @@ def homeFeed():
                         "$and": [
                             {
                                 "longitude": {
-                                    "$gt": longitudeDown
+                                    "$gt": "72.00"
                                 }
                             },
                             {
                                 "longitude": {
-                                    "$lt": longitudeUp
+                                    "$lt": "73.00"
                                 }
                             }
                         ]
