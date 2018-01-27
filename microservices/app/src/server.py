@@ -93,6 +93,11 @@ def zomatoLogout():
 @app.route('/homefeed/', methods=['POST'])
 def homeFeed():
     userLocation = request.get_json()
+    print(userLocation)
+    latitudeDown = userLocation['latitude']-0.5
+    latitudeUp = userLocation['latitude']+0.5
+    longitudeDown = userLocation['longitude']-0.5
+    longitudeUp = userLocation['longitude']+0.5
     locationPayload = {
         "type": "select",
         "args": {
@@ -109,12 +114,12 @@ def homeFeed():
                         "$and": [
                             {
                                 "latitude": {
-                                    "$gt": userLocation['latitude']-0.5
+                                    "$gt": latitudeDown
                                 }
                             },
                             {
                                 "latitude": {
-                                    "$lt": userLocation['latitude']+0.5
+                                    "$lt": latitudeUp
                                 }
                             }
                         ]
@@ -123,12 +128,12 @@ def homeFeed():
                         "$and": [
                             {
                                 "longitude": {
-                                    "$gt": userLocation['longitude']-0.5
+                                    "$gt": longitudeDown
                                 }
                             },
                             {
                                 "longitude": {
-                                    "$lt": userLocation['longitude']+0.5
+                                    "$lt": 
                                 }
                             }
                         ]
