@@ -1,0 +1,10 @@
+- args:
+    sql: ALTER TABLE "restaurant" ALTER COLUMN "restaurant_image_url" TYPE text;
+  type: run_sql
+- args:
+    sql: ALTER TABLE ONLY "restaurant" ALTER COLUMN "restaurant_image_url" SET DEFAULT
+      'https://filestore.butane33.hasura-app.io/v1/file/6db15e64-26ab-45cd-9be9-5f58b3d5f6cd';
+  type: run_sql
+- args:
+    sql: ALTER TABLE "restaurant" ALTER COLUMN "restaurant_image_url" SET NOT NULL;
+  type: run_sql

@@ -1,3 +1,0 @@
-- args:
-    sql: ALTER TABLE "menu_image" DROP COLUMN "restaurant_id"
-  type: run_sql

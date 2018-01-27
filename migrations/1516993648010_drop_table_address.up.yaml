@@ -1,3 +1,0 @@
-- args:
-    sql: DROP TABLE "address"
-  type: run_sql

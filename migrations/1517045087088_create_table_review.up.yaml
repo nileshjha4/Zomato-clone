@@ -1,0 +1,9 @@
+- args:
+    sql: CREATE TABLE "review"("user_id" integer NOT NULL, "restaurant_id" integer
+      NOT NULL, "rating_stars" integer NOT NULL, "review_text" text NOT NULL, "created"
+      timestamptz NOT NULL DEFAULT now(), PRIMARY KEY ("user_id","restaurant_id")
+      )
+  type: run_sql
+- args:
+    name: review
+  type: add_existing_table_or_view

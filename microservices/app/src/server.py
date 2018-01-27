@@ -90,40 +90,135 @@ def zomatoLogout():
     print(resp)
     return jsonify({"message" : resp['message']})
 
-
-@app.route('/userimage/', methods=['POST'])
-def updateUserImage():
-    imageFile = request.files['image']
-    userToken = request.form.get('auth_token')
-    try :
-        uploadResp = requests.post( fileUrl, data=imageFile.read(), headers = fileHeaders)
-        print("file_id : ",uploadResp['file_id'],", status : ",uploadResp['file_status'])
-    except KeyError :
-        return jsonify({"message" : uploadResp['message']})
-    else :
-        Authorization = "Bearer " + userToken
-        authHeader = {
-            "Content-Type": "application/json",
-            "Authorization": Authorization
-        }
-        userInfoResp = requests.request("GET", userInfoUrl, headers=headers)
-        photo_url = fileUrl + "/" + uploadResp['file_id']
-        updateUserImagePayload = {
-            "type": "update",
-            "args": {
-                "table": "users",
-                "where": {
-                    "hasura_id": {
-                        "$eq": userInfoResp['hasura_id']
+@app.route('/homefeed/', methods=['POST'])
+def homeFeed():
+    userLocation = request.get_json()
+    loctionPayload = {
+        "type": "select",
+        "args": {
+            "table": "restaurant",
+            "columns": [
+                "restaurant_id",
+                "restaurant_name",
+                "restaurant_image_url",
+                "state"
+            ],
+            "where": {
+                "$and": [
+                    {
+                        "$and": [
+                            {
+                                "latitude": {
+                                    "$gt": userLocation['latitude']-0.5
+                                }
+                            },
+                            {
+                                "latitude": {
+                                    "$lt": userLocation['latitude']+0.5
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "$and": [
+                            {
+                                "longitude": {
+                                    "$gt": userLocation['longitude']-0.5
+                                }
+                            },
+                            {
+                                "longitude": {
+                                    "$lt": userLocation['longitude']+0.5
+                                }
+                            }
+                        ]
                     }
-                },
-                "$set": {
-                    "photo_url": fileUrl + uploadResp['file_id']
+                ]
+            },
+            "order_by": [
+                {
+                    "column": "restaurant_id",
+                    "order": "asc"
                 }
-            }
+            ]
         }
-        resp = requests.request("POST", dataUrl, data=json.dumps(updateUserImagePayload), headers=dataHeaders)
+    }
+    resturantList = requests.request("POST", url, data=json.dumps(loctionPayload), headers=dataHeaders).json()
+    print(restaurantList)
+    return jsonify({"message":"ok"})
+
+    
 
 
 if __name__ == '__main__':
     app.run(threaded = True)
+
+https://filestore.butane33.hasura-app.io/v1/file/e8d5d65c-539d-4caf-9949-cd97bb647698
+
+
+
+
+
+# This is the json payload for the query
+requestPayload = {
+    "type": "select",
+    "args": {
+        "table": "restaurant",
+        "columns": [
+            "restaurant_id",
+            "restaurant_name",
+            "restaurant_image_url",
+            "state"
+        ],
+        "where": {
+            "$and": [
+                {
+                    "$and": [
+                        {
+                            "latitude": {
+                                "$gt": "18.0"
+                            }
+                        },
+                        {
+                            "latitude": {
+                                "$lt": "20.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "$and": [
+                        {
+                            "longitude": {
+                                "$gt": "72.0"
+                            }
+                        },
+                        {
+                            "longitude": {
+                                "$lt": "73.0"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "order_by": [
+            {
+                "column": "restaurant_id",
+                "order": "asc"
+            }
+        ]
+    }
+}
+
+# Setting headers
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
+}
+
+# Make the query and store response in resp
+resp = requests.request("POST", url, data=json.dumps(requestPayload), headers=headers)
+
+# resp.content contains the json response.
+print(resp.content)

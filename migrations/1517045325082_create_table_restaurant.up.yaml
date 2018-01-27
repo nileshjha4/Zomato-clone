@@ -1,0 +1,9 @@
+- args:
+    sql: CREATE TABLE "restaurant"("restaurant_id" serial NOT NULL, "restaurant_name"
+      text NOT NULL, "Address" text NOT NULL, "pincode" bigint NOT NULL, "state" text
+      NOT NULL, "country" text NOT NULL, "restaurant_image_url" text NOT NULL, PRIMARY
+      KEY ("restaurant_id") )
+  type: run_sql
+- args:
+    name: restaurant
+  type: add_existing_table_or_view
