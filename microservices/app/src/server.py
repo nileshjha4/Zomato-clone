@@ -22,67 +22,63 @@ dataHeaders= {
 
 
 def fetchRestaurantList(latitude, longitude):
-    try:
-        latitudeDown = str(float(userLocation['latitude'])-1.0)
-        latitudeUp = str(float(userLocation['latitude'])+1.0)
-        longitudeDown = str(float(userLocation['longitude'])-1.0)
-        longitudeUp = str(float(userLocation['longitude'])+1.0)
-        locationPayload = {
-                "type": "select",
-                "args": {
-                    "table": "restaurant",
-                    "columns": [
-                        "restaurant_id",
-                        "restaurant_name",
-                        "restaurant_image_url",
-                        "state"
-                    ],
-                    "where": {
-                        "$and": [
-                            {
-                                "$and": [
-                                    {
-                                        "latitude": {
-                                            "$gt": latitudeDown
-                                        }
-                                    },
-                                    {
-                                        "latitude": {
-                                            "$lt": latitudeUp
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "$and": [
-                                    {
-                                        "longitude": {
-                                            "$gt": longitudeDown
-                                        }
-                                    },
-                                    {
-                                        "longitude": {
-                                            "$lt": longitudeUp
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "order_by": [
+    latitudeDown = str(float(userLocation['latitude'])-1.0)
+    latitudeUp = str(float(userLocation['latitude'])+1.0)
+    longitudeDown = str(float(userLocation['longitude'])-1.0)
+    longitudeUp = str(float(userLocation['longitude'])+1.0)
+    locationPayload = {
+            "type": "select",
+            "args": {
+                "table": "restaurant",
+                "columns": [
+                    "restaurant_id",
+                    "restaurant_name",
+                    "restaurant_image_url",
+                    "state"
+                ],
+                "where": {
+                    "$and": [
                         {
-                            "column": "restaurant_id",
-                            "order": "asc"
+                            "$and": [
+                                {
+                                    "latitude": {
+                                        "$gt": latitudeDown
+                                    }
+                                },
+                                {
+                                    "latitude": {
+                                        "$lt": latitudeUp
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "$and": [
+                                {
+                                    "longitude": {
+                                        "$gt": longitudeDown
+                                    }
+                                },
+                                {
+                                    "longitude": {
+                                        "$lt": longitudeUp
+                                    }
+                                }
+                            ]
                         }
                     ]
-                }
+                },
+                "order_by": [
+                    {
+                        "column": "restaurant_id",
+                        "order": "asc"
+                    }
+                ]
             }
-        restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
-        print(restaurantList)
-        return restaurantList
-    except Exception as e:
-        print(type(e))
-        return "Something went wrong! Try again."
+        }
+    restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
+    print(restaurantList)
+    return restaurantList
 
 
 @app.route("/")
