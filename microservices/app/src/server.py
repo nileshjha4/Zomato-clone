@@ -93,7 +93,7 @@ def zomatoLogout():
 @app.route('/homefeed/', methods=['POST'])
 def homeFeed():
     userLocation = request.get_json()
-    loctionPayload = {
+    locationPayload = {
         "type": "select",
         "args": {
             "table": "restaurant",
@@ -143,7 +143,7 @@ def homeFeed():
             ]
         }
     }
-    resturantList = requests.request("POST", url, data=json.dumps(loctionPayload), headers=dataHeaders).json()
+    resturantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
     print(restaurantList)
     return jsonify({"message":"ok"})
 
@@ -153,72 +153,4 @@ def homeFeed():
 if __name__ == '__main__':
     app.run(threaded = True)
 
-https://filestore.butane33.hasura-app.io/v1/file/e8d5d65c-539d-4caf-9949-cd97bb647698
 
-
-
-
-
-# This is the json payload for the query
-requestPayload = {
-    "type": "select",
-    "args": {
-        "table": "restaurant",
-        "columns": [
-            "restaurant_id",
-            "restaurant_name",
-            "restaurant_image_url",
-            "state"
-        ],
-        "where": {
-            "$and": [
-                {
-                    "$and": [
-                        {
-                            "latitude": {
-                                "$gt": "18.0"
-                            }
-                        },
-                        {
-                            "latitude": {
-                                "$lt": "20.0"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "$and": [
-                        {
-                            "longitude": {
-                                "$gt": "72.0"
-                            }
-                        },
-                        {
-                            "longitude": {
-                                "$lt": "73.0"
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        "order_by": [
-            {
-                "column": "restaurant_id",
-                "order": "asc"
-            }
-        ]
-    }
-}
-
-# Setting headers
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
-}
-
-# Make the query and store response in resp
-resp = requests.request("POST", url, data=json.dumps(requestPayload), headers=headers)
-
-# resp.content contains the json response.
-print(resp.content)
