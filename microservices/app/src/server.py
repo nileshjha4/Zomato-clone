@@ -93,6 +93,13 @@ def zomatoLogout():
 @app.route('/homefeed/', methods=['POST'])
 def homeFeed():
     userLocation = request.get_json()
+    try:
+        latitudeDown = str(int(userLocation['latitude'])-1.0)
+        latitudeUp = str(int(userLocation['latitude'])+1.0)
+        longitudeDown = str(int(userLocation['longitude'])-1.0)
+        longitudeUp = str(int(userLocation['longitude'])+1.0)
+    except ValueError :
+        return jsonify({"message" : "Location not found"})
     locationPayload = {
         "type": "select",
         "args": {
@@ -109,12 +116,12 @@ def homeFeed():
                         "$and": [
                             {
                                 "latitude": {
-                                    "$gt": "19.00"
+                                    "$gt": latitudeDown
                                 }
                             },
                             {
                                 "latitude": {
-                                    "$lt": "20.00"
+                                    "$lt": latitudeUp
                                 }
                             }
                         ]
@@ -123,12 +130,12 @@ def homeFeed():
                         "$and": [
                             {
                                 "longitude": {
-                                    "$gt": "72.00"
+                                    "$gt": longitudeDown
                                 }
                             },
                             {
                                 "longitude": {
-                                    "$lt": "73.00"
+                                    "$lt": longitudeUp
                                 }
                             }
                         ]
@@ -145,7 +152,7 @@ def homeFeed():
     }
     restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
     print(restaurantList)
-    return jsonify({"message":"ok"})
+    return jsonify({"message" : "ok"})
 
     
 
