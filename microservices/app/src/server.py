@@ -133,7 +133,7 @@ def homeFeed():
                             },
                             {
                                 "longitude": {
-                                    "$lt": 
+                                    "$lt": longitudeUp
                                 }
                             }
                         ]
