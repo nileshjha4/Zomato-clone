@@ -168,7 +168,7 @@ def homeFeed():
     return jsonify({"count" : str(len(restaurantList)), "restaurantList" : restaurantList })
 
     
-@app.route('/search/')
+@app.route('/search/', methods=['POST'])
 def search():
     searchData = request.get_json()
     try:
