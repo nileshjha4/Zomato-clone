@@ -22,10 +22,10 @@ dataHeaders= {
 
 
 def fetchRestaurantList(latitude, longitude):
-    latitudeDown = str(float(userLocation['latitude'])-1.0)
-    latitudeUp = str(float(userLocation['latitude'])+1.0)
-    longitudeDown = str(float(userLocation['longitude'])-1.0)
-    longitudeUp = str(float(userLocation['longitude'])+1.0)
+    latitudeDown = str(float(latitude)-1.0)
+    latitudeUp = str(float(latitude)+1.0)
+    longitudeDown = str(float(longitude)-1.0)
+    longitudeUp = str(float(longitude)+1.0)
     locationPayload = {
             "type": "select",
             "args": {
@@ -157,14 +157,8 @@ def zomatoLogout():
 
 @app.route('/homefeed/', methods=['POST'])
 def homeFeed():
-    try:
-        userLocation = request.get_json()
-        restaurantList = fetchRestaurantList(userLocation['latitude'], userLocation['longitude'])
-    except Exception as e:
-        print(type(e))
-        return jsonify({"message" : "Something went wrong! Try again."})
-    if type(restaurantList)==str:
-        return jsonify({"message" : "Something went wrong! Try again."})
+    userLocation = request.get_json()
+    restaurantList = fetchRestaurantList(userLocation['latitude'], userLocation['longitude'])
     return jsonify({"count" : str(len(restaurantList)), "restaurantList" : restaurantList })
 
     
