@@ -142,7 +142,7 @@ def homeFeed():
             ]
         }
     }
-    resturantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
+    restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
     print(restaurantList)
     return jsonify({"message":"ok"})
 
