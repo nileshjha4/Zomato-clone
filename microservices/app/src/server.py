@@ -158,7 +158,7 @@ def homeFeed():
         print(restaurantList)
     except :
         return jsonify({"message" : "Some error occured"})
-    return jsonify({"message" : "ok"})
+    return jsonify({"count" : str(len(restaurantList)), "restaurantList" : restaurantList })
 
     
 
