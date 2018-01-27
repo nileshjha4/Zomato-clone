@@ -1,0 +1,4 @@
+- args:
+    sql: ALTER TABLE "review" ADD FOREIGN KEY ("restaurant_id") REFERENCES "restaurant"
+      ("restaurant_id")
+  type: run_sql

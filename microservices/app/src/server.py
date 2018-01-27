@@ -7,15 +7,17 @@ signupUrl = "https://auth.butane33.hasura-app.io/v1/signup"
 loginUrl = "https://auth.butane33.hasura-app.io/v1/login"
 dataUrl = "https://data.butane33.hasura-app.io/v1/query"
 logoutUrl = "https://auth.butane33.hasura-app.io/v1/user/logout"
+userInfoUrl = "https://auth.butane33.hasura-app.io/v1/user/info"
+fileUrl = "https://filestore.butane33.hasura-app.io/v1/file"
 
 headers = {
     "Content-Type": "application/json"
 }
 
 dataHeaders= {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
-        }
+    "Content-Type": "application/json",
+    "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
+}
 
 @app.route("/")
 def home():
@@ -87,6 +89,40 @@ def zomatoLogout():
     resp = requests.request("POST", logoutUrl, headers=headers).json()
     print(resp)
     return jsonify({"message" : resp['message']})
+
+
+@app.route('/userimage/', methods=['POST'])
+def updateUserImage():
+    imageFile = request.files.get('user_image')
+    userToken = request.form.get('auth_token')
+    try :
+        uploadResp = requests.post( fileUrl, data=imageFile.read(), headers = fileHeaders)
+        print("file_id : ",uploadResp['file_id'],", status : ",uploadResp['file_status'])
+    except KeyError :
+        return jsonify({"message" : uploadResp['message']})
+    else :
+        Authorization = "Bearer " + userToken
+        authHeader = {
+            "Content-Type": "application/json",
+            "Authorization": Authorization
+        }
+        userInfoResp = requests.request("GET", userInfoUrl, headers=headers)
+        photo_url = fileUrl + "/" + uploadResp['file_id']
+        updateUserImagePayload = {
+            "type": "update",
+            "args": {
+                "table": "users",
+                "where": {
+                    "hasura_id": {
+                        "$eq": userInfoResp['hasura_id']
+                    }
+                },
+                "$set": {
+                    "photo_url": fileUrl + uploadResp['file_id']
+                }
+            }
+        }
+        resp = requests.request("POST", dataUrl, data=json.dumps(updateUserImagePayload), headers=dataHeaders)
 
 
 if __name__ == '__main__':
