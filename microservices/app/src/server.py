@@ -2,6 +2,7 @@ from src import app
 from flask import Flask, render_template, request, make_response, send_file,jsonify
 import requests
 import json
+import geocoder
 
 signupUrl = "https://auth.butane33.hasura-app.io/v1/signup"
 loginUrl = "https://auth.butane33.hasura-app.io/v1/login"
@@ -18,6 +19,71 @@ dataHeaders= {
     "Content-Type": "application/json",
     "Authorization": "Bearer 79f276cd9a8111dbf1e6f10d02b305cc2aeedc8f31f113e7"
 }
+
+
+def fetchRestaurantList(latitude, longitude):
+    try:
+        latitudeDown = str(float(userLocation['latitude'])-1.0)
+        latitudeUp = str(float(userLocation['latitude'])+1.0)
+        longitudeDown = str(float(userLocation['longitude'])-1.0)
+        longitudeUp = str(float(userLocation['longitude'])+1.0)
+        locationPayload = {
+                "type": "select",
+                "args": {
+                    "table": "restaurant",
+                    "columns": [
+                        "restaurant_id",
+                        "restaurant_name",
+                        "restaurant_image_url",
+                        "state"
+                    ],
+                    "where": {
+                        "$and": [
+                            {
+                                "$and": [
+                                    {
+                                        "latitude": {
+                                            "$gt": latitudeDown
+                                        }
+                                    },
+                                    {
+                                        "latitude": {
+                                            "$lt": latitudeUp
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$and": [
+                                    {
+                                        "longitude": {
+                                            "$gt": longitudeDown
+                                        }
+                                    },
+                                    {
+                                        "longitude": {
+                                            "$lt": longitudeUp
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "order_by": [
+                        {
+                            "column": "restaurant_id",
+                            "order": "asc"
+                        }
+                    ]
+                }
+            }
+        restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
+        print(restaurantList)
+        return restaurantList
+    except Exception as e:
+        print(type(e))
+        return "Something went wrong! Try again."
+
 
 @app.route("/")
 def home():
@@ -97,73 +163,35 @@ def zomatoLogout():
 def homeFeed():
     try:
         userLocation = request.get_json()
-        latitudeDown = str(float(userLocation['latitude'])-1.0)
-        latitudeUp = str(float(userLocation['latitude'])+1.0)
-        longitudeDown = str(float(userLocation['longitude'])-1.0)
-        longitudeUp = str(float(userLocation['longitude'])+1.0)
-    except :
-        return jsonify({"message" : "Location not found"})
-    try:
-        locationPayload = {
-            "type": "select",
-            "args": {
-                "table": "restaurant",
-                "columns": [
-                    "restaurant_id",
-                    "restaurant_name",
-                    "restaurant_image_url",
-                    "state"
-                ],
-                "where": {
-                    "$and": [
-                        {
-                            "$and": [
-                                {
-                                    "latitude": {
-                                        "$gt": latitudeDown
-                                    }
-                                },
-                                {
-                                    "latitude": {
-                                        "$lt": latitudeUp
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "$and": [
-                                {
-                                    "longitude": {
-                                        "$gt": longitudeDown
-                                    }
-                                },
-                                {
-                                    "longitude": {
-                                        "$lt": longitudeUp
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "order_by": [
-                    {
-                        "column": "restaurant_id",
-                        "order": "asc"
-                    }
-                ]
-            }
-        }
-        restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
-        print(restaurantList)
-    except :
-        return jsonify({"message" : "Some error occured"})
+        restaurantList = fetchRestaurantList(userLocation['latitude'], userLocation['longitude'])
+    except Exception as e:
+        print(type(e))
+        return jsonify({"message" : "Something went wrong! Try again."})
+    if type(restaurantList)==str:
+        return jsonify({"message" : "Something went wrong! Try again."})
     return jsonify({"count" : str(len(restaurantList)), "restaurantList" : restaurantList })
 
     
+@app.route('/search/')
+def search():
+    searchData = request.get_json()
+    try:
+        searchInput=searchData['searchInput']
+    except KeyError :
+        return jsonify({"message" : "Search input not recieved"})    
+    location = geocoder.google(searchInput)
+    if location.latlng==None:
+        return jsonify({"message" : "Something went wrong! Try again."})
+    restaurantList = fetchRestaurantList(location.lat, location.lng)
+    if type(restaurantList)==str:
+        return jsonify({"message" : "Something went wrong! Try again."})
+    return jsonify({"count" : str(len(restaurantList)), "restaurantList" : restaurantList })
+
 
 
 if __name__ == '__main__':
     app.run(threaded = True)
+
+
 
 
