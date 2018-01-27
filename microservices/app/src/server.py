@@ -22,62 +22,66 @@ dataHeaders= {
 
 
 def fetchRestaurantList(latitude, longitude):
-    latitudeDown = str(float(latitude)-1.0)
-    latitudeUp = str(float(latitude)+1.0)
-    longitudeDown = str(float(longitude)-1.0)
-    longitudeUp = str(float(longitude)+1.0)
-    locationPayload = {
-            "type": "select",
-            "args": {
-                "table": "restaurant",
-                "columns": [
-                    "restaurant_id",
-                    "restaurant_name",
-                    "restaurant_image_url",
-                    "state"
-                ],
-                "where": {
-                    "$and": [
+    try:
+        latitudeDown = str(float(latitude)-1.0)
+        latitudeUp = str(float(latitude)+1.0)
+        longitudeDown = str(float(longitude)-1.0)
+        longitudeUp = str(float(longitude)+1.0)
+        locationPayload = {
+                "type": "select",
+                "args": {
+                    "table": "restaurant",
+                    "columns": [
+                        "restaurant_id",
+                        "restaurant_name",
+                        "restaurant_image_url",
+                        "state"
+                    ],
+                    "where": {
+                        "$and": [
+                            {
+                                "$and": [
+                                    {
+                                        "latitude": {
+                                            "$gt": latitudeDown
+                                        }
+                                    },
+                                    {
+                                        "latitude": {
+                                            "$lt": latitudeUp
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$and": [
+                                    {
+                                        "longitude": {
+                                            "$gt": longitudeDown
+                                        }
+                                    },
+                                    {
+                                        "longitude": {
+                                            "$lt": longitudeUp
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "order_by": [
                         {
-                            "$and": [
-                                {
-                                    "latitude": {
-                                        "$gt": latitudeDown
-                                    }
-                                },
-                                {
-                                    "latitude": {
-                                        "$lt": latitudeUp
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "$and": [
-                                {
-                                    "longitude": {
-                                        "$gt": longitudeDown
-                                    }
-                                },
-                                {
-                                    "longitude": {
-                                        "$lt": longitudeUp
-                                    }
-                                }
-                            ]
+                            "column": "restaurant_id",
+                            "order": "asc"
                         }
                     ]
-                },
-                "order_by": [
-                    {
-                        "column": "restaurant_id",
-                        "order": "asc"
-                    }
-                ]
+                }
             }
-        }
-    restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
-    print(restaurantList)
+        restaurantList = requests.request("POST", dataUrl, data=json.dumps(locationPayload), headers=dataHeaders).json()
+        print(restaurantList)
+    except Exception as e:
+        print(type(e))
+        return "Something went wrong! try again"
     return restaurantList
 
 
@@ -158,7 +162,12 @@ def zomatoLogout():
 @app.route('/homefeed/', methods=['POST'])
 def homeFeed():
     userLocation = request.get_json()
-    restaurantList = fetchRestaurantList(userLocation['latitude'], userLocation['longitude'])
+    try:
+        restaurantList = fetchRestaurantList(userLocation['latitude'], userLocation['longitude'])
+    except KeyError:
+        return jsonify({"message" : "Location not recieved"})
+    if type(restaurantList)==str:
+        return jsonify({"message" : "Something went wrong! Try again."})
     return jsonify({"count" : str(len(restaurantList)), "restaurantList" : restaurantList })
 
     
@@ -171,7 +180,7 @@ def search():
         return jsonify({"message" : "Search input not recieved"})    
     location = geocoder.google(searchInput)
     if location.latlng==None:
-        return jsonify({"message" : "Something went wrong! Try again."})
+        return jsonify({"message" : "Something went wrong at server! Try again."})
     restaurantList = fetchRestaurantList(location.lat, location.lng)
     if type(restaurantList)==str:
         return jsonify({"message" : "Something went wrong! Try again."})
