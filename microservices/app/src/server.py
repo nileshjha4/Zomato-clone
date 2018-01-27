@@ -93,7 +93,7 @@ def zomatoLogout():
 
 @app.route('/userimage/', methods=['POST'])
 def updateUserImage():
-    imageFile = request.files.get('user_image')
+    imageFile = request.files['image']
     userToken = request.form.get('auth_token')
     try :
         uploadResp = requests.post( fileUrl, data=imageFile.read(), headers = fileHeaders)
