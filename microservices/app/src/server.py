@@ -92,6 +92,7 @@ def zomatoLogout():
 
 @app.route('/homefeed/', methods=['POST'])
 def homeFeed():
+    userLocation = request.get_json()
     locationPayload = {
         "type": "select",
         "args": {
