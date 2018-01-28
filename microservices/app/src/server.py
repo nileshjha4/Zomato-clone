@@ -81,8 +81,187 @@ def fetchRestaurantList(latitude, longitude):
         print(restaurantList)
     except Exception as e:
         print(type(e))
-        return "Something went wrong! try again"
+        return "Something went wrong at the server! Please try again"
     return restaurantList
+
+
+def getRestaurantDetails(restaurant_id):
+    try:    
+        restaurantPayload = {
+                "type": "select",
+                "args": {
+                    "table": "restaurant",
+                    "columns": [
+                        "restaurant_id",
+                        "restaurant_name",
+                        "address",
+                        "pincode",
+                        "state",
+                        "country",
+                        "restaurant_image_url"
+                    ],
+                    "where": {
+                        "restaurant_id": {
+                            "$eq": restaurant_id
+                        }
+                    }
+                }
+            }
+        restaurantData = requests.request("POST", dataUrl, data=json.dumps(restaurantPayload), headers=dataHeaders).json()
+        print(restaurantData)
+    except Exception as e:
+        print(type(e))
+        print(e)
+        return "Something went wrong at server! Please try again."
+    return restaurantData
+
+
+def getRestaurantReviews(restaurant_id):
+    try:    
+        restaurantReviewPayload = {
+                "type": "select",
+                "args": {
+                    "table": "review",
+                    "columns": [
+                        "user_id",
+                        "restaurant_id",
+                        "rating_stars",
+                        "review_text",
+                        "created"
+                    ],
+                    "where": {
+                        "restaurant_id": {
+                            "$eq": restaurant_id
+                        }
+                    },
+                    "order_by": [
+                        {
+                            "column": "rating_stars",
+                            "order": "asc"
+                        }
+                    ]
+                }
+            }
+        reviewList = requests.request("POST", dataUrl, data=json.dumps(restaurantReviewPayload), headers=dataHeaders).json()
+        print("reviewList")
+    except Exception as e:
+        print(type(e))
+        print(e)
+        return "Something went wrong at the server! Try again."
+    return reviewList
+
+
+def getCuisine(restaurant_id):
+    try:
+        cuisinePayload = {
+                "type": "select",
+                "args": {
+                    "table": "cuisine",
+                    "columns": [
+                        "restaurant_id",
+                        "cuisine_name"
+                    ],
+                    "where": {
+                        "restaurant_id": {
+                            "$eq": "4"
+                        }
+                    }
+                }
+            }
+        cuisineList = requests.request("POST", dataUrl, data=json.dumps(cuisinePayload), headers=dataHeaders).json()
+        print(cuisineList)
+    except Exception as e :
+        print(type(e))
+        print(e)
+        return "Something went wrong at the server! Please try again."
+    return cuisineList
+
+
+def getRestaurantView(restaurant_id):
+    try:
+        restaurantViewPayload = {
+                "type": "select",
+                "args": {
+                    "table": "restaurant_view",
+                    "columns": [
+                        "restaurant_id",
+                        "view_image_url"
+                    ],
+                    "where": {
+                        "restaurant_id": {
+                            "$eq": restaurant_id
+                        }
+                    }
+                }
+            }
+        restaurantViewList = requests.request("POST", dataUrl, data=json.dumps(restaurantViewPayload), headers=dataHeaders).json()
+        print(restaurantViewList)
+    except Exception as e :
+        print(type(e))
+        print(e)
+        return "Something went wrong at the server! Please try again."
+    return restaurantViewList
+
+
+def getRestaurantMenu(restaurant_id):
+    try:
+        restaurantMenuPayload = {
+                "type": "select",
+                "args": {
+                    "table": "menu",
+                    "columns": [
+                        "restaurant_id",
+                        "menu_url"
+                    ],
+                    "where": {
+                        "restaurant_id": {
+                            "$eq": restaurant_id
+                        }
+                    }
+                }
+            }
+        restaurantMenuList = requests.request("POST", dataUrl, data=json.dumps(restaurantMenuPayload), headers=dataHeaders).json()
+        print(restaurantMenuList)
+    except Exception as e :
+        print(type(e))
+        print(e)
+        return "Something went wrong at the server! Please try again."
+    return restaurantMenuList
+
+
+def getUserReviews(user_id):
+    try:    
+        userReviewPayload = {
+                "type": "select",
+                "args": {
+                    "table": "review",
+                    "columns": [
+                        "user_id",
+                        "restaurant_id",
+                        "rating_stars",
+                        "review_text",
+                        "created"
+                    ],
+                    "where": {
+                        "user_id": {
+                            "$eq": user_id
+                        }
+                    },
+                    "order_by": [
+                        {
+                            "column": "rating_stars",
+                            "order": "asc"
+                        }
+                    ]
+                }
+            }
+        reviewList = requests.request("POST", dataUrl, data=json.dumps(userReviewPayload), headers=dataHeaders).json()
+        print("reviewList")
+    except Exception as e:
+        print(type(e))
+        print(e)
+        return "Something went wrong at the server! Try again."
+    return reviewList
 
 
 @app.route("/")
@@ -183,10 +362,31 @@ def search():
         return jsonify({"message" : "Something went wrong at server! Try again."})
     restaurantList = fetchRestaurantList(location.lat, location.lng)
     if type(restaurantList)==str:
-        return jsonify({"message" : "Something went wrong! Try again."})
+        return jsonify({"message" : "Something went wrong at the server! Try again."})
     return jsonify({"count" : str(len(restaurantList)), "restaurantList" : restaurantList })
 
 
+@app.route('/getrestaurant/', methods=['POST'])
+def getRestaurant():
+    restaurantInput = request.get_json()
+    try:
+        restaurant_id = str(int(restaurantInput['restaurant_id']))
+    except KeyError :
+        return jsonify({"message" : "Inappropriate request! Try again."})
+    except ValueError :
+        return     jsonify({"message" : "Invalid restaurant id."})
+    restaurantData = getRestaurantDetails(restaurant_id)
+    reviewList = getRestaurantReviews(restaurant_id)
+    cuisineList = getCuisine(restaurant_id)
+    restaurantViewList = getRestaurantView(restaurant_id)
+    restaurantMenuList = getRestaurantMenu(restaurant_id)
+    if type(restaurantData or reviewList or cuisineList or restaurantViewList or restaurantMenuList)==str:
+        return jsonify({"message" : "Something went wrong at the server! Try again."})
+    return jsonify({"restaurant_details" : restaurantData , "reviews_count" : str(len(reviewList)), "reviews" : reviewList, "menu_count" :  str(len(restaurantMenuList)), "menu" : restaurantMenuList, "restaurant_view_count" : str(len(restaurantViewList)), "restaurant_view" : restaurantViewList, "cuisine_count" : str(len(cuisineList)), "cuisine" : cuisineList })
+
+
+
+    
 
 if __name__ == '__main__':
     app.run(threaded = True)
