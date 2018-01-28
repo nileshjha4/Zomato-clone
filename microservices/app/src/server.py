@@ -143,7 +143,7 @@ def getRestaurantReviews(restaurant_id):
                 }
             }
         reviewList = requests.request("POST", dataUrl, data=json.dumps(restaurantReviewPayload), headers=dataHeaders).json()
-        print("reviewList")
+        print(reviewList)
     except Exception as e:
         print(type(e))
         print(e)
