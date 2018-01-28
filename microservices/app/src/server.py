@@ -364,8 +364,6 @@ def zomatoLogout():
     return jsonify({"message" : resp['message']})
 
 
-
-
 @app.route('/homefeed/', methods=['POST'])
 def homeFeed():
     userLocation = request.get_json()
@@ -427,6 +425,36 @@ def getUser():
     if type(userData or reviewList)==str:
         return jsonify({"message" : "Something went wrong at the server! Try again."})
     return jsonify({"userDetails" : userData, "reviews_count" : str(len(reviewList)), "reviews" : reviewList})
+
+
+@app.route('/addreview/')
+def addReview():
+    reviewData = request.get_json()
+    try:
+        reviewPayload = {
+                "type": "insert",
+                "args": {
+                    "table": "review",
+                    "objects": [
+                        {
+                            "restaurant_id": reviewData['restaurant_id'],
+                            "rating_stars": reviewData['rating_stars'],
+                            "review_text": reviewData['review_text'],
+                            "user_id": reviewData['user_id']
+                        }
+                    ]
+                }
+            }
+    except KeyError :
+        return jsonify({"message" : "Inappropriate request! Try again."})
+    try:
+        reviewResp = requests.request("POST", url, data=json.dumps(requestPayload), headers=headers)
+        print(reviewResp)
+    except Exception as e:
+        print(type(e))
+        print(e)
+        return jsonify({"message" : "Something went wrong at the server! Try again."})
+    return jsonify({"message" : "review added"})
 
 
 if __name__ == '__main__':
