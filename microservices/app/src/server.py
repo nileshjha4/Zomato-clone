@@ -256,12 +256,40 @@ def getUserReviews(user_id):
                 }
             }
         reviewList = requests.request("POST", dataUrl, data=json.dumps(userReviewPayload), headers=dataHeaders).json()
-        print("reviewList")
+        print(reviewList)
     except Exception as e:
         print(type(e))
         print(e)
         return "Something went wrong at the server! Try again."
     return reviewList
+
+
+def getUserData(user_id):
+    try:
+        userDataPayload = {
+                "type": "select",
+                "args": {
+                    "table": "users",
+                    "columns": [
+                        "hasura_id",
+                        "name",
+                        "username",
+                        "photo_url"
+                    ],
+                    "where": {
+                        "hasura_id": {
+                            "$eq": user_id
+                        }
+                    }
+                }
+            }
+        userData = requests.request("POST", url, data=json.dumps(userDataPayload), headers=dataHeaders).json()
+        print(userData)
+    except Exception as e:
+        print(type(e))
+        print(e)
+        return "Something went wrong at the server! Try again."
+    return userData
 
 
 @app.route("/")
@@ -385,12 +413,21 @@ def getRestaurant():
     return jsonify({"restaurant_details" : restaurantData , "reviews_count" : str(len(reviewList)), "reviews" : reviewList, "menu_count" :  str(len(restaurantMenuList)), "menu" : restaurantMenuList, "restaurant_view_count" : str(len(restaurantViewList)), "restaurant_view" : restaurantViewList, "cuisine_count" : str(len(cuisineList)), "cuisine" : cuisineList })
 
 
+@app.route('/getuser/', methods=['POST'])
+def getUser():
+    userInput = request.get_json()
+    try:
+        user_id = str(int(userInput['user_id']))
+    except KeyError :
+        return jsonify({"message" : "Inappropriate request! Try again."})
+    except ValueError :
+        return jsonify({"message" : "Invalid restaurant id."})
+    userData = getUserData(user_id)
+    reviewList = getUserReviews(user_id)
+    if type(userData or reviewList)==str:
+        return jsonify({"message" : "Something went wrong at the server! Try again."})
+    return jsonify({"userDetails" : userData, "reviews_count" : str(len(userData)), "reviews" : reviewList})
 
-    
 
 if __name__ == '__main__':
     app.run(threaded = True)
-
-
-
-
