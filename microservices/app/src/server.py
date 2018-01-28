@@ -9,7 +9,8 @@ loginUrl = "https://auth.butane33.hasura-app.io/v1/login"
 dataUrl = "https://data.butane33.hasura-app.io/v1/query"
 logoutUrl = "https://auth.butane33.hasura-app.io/v1/user/logout"
 userInfoUrl = "https://auth.butane33.hasura-app.io/v1/user/info"
-fileUrl = "https://filestore.butane33.hasura-app.io/v1/file"
+changePasswordUrl ="https://auth.butane33.hasura-app.io/v1/providers/username/change-password"
+
 
 headers = {
     "Content-Type": "application/json"
@@ -362,6 +363,32 @@ def zomatoLogout():
     resp = requests.request("POST", logoutUrl, headers=headers).json()
     print(resp)
     return jsonify({"message" : resp['message']})
+
+
+@app.route('/changepassword/', methods=['POST'])
+def changePassword():
+    userCredentials = request.get_json()
+    try:    
+        Authorization = "Bearer " + logoutToken['auth_token']
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": Authorization
+        }
+        print(headers)
+        passwordPayload = {
+            "old_password" : userCredentials['old_password']
+            "new_password" : userCredentials['new_password']
+        }
+        changePasswordResp = requests.request("POST", changePasswordUrl, data = json.dumps(passwordPayload), headers=headers)
+        print(changePasswordResp)
+    except KeyError :
+        return jsonify({"message" : "Inappropriate request! Try again."})
+    except Exception as e :
+        except Exception as e:
+        print(type(e))
+        print(e)
+        return jsonify({"message" : "Something went wrong at the server! Try again."})
+    return jsonify({"message" : changePasswordResp['message']})
 
 
 @app.route('/homefeed/', methods=['POST'])
