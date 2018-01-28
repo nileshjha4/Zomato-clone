@@ -426,7 +426,7 @@ def getUser():
     reviewList = getUserReviews(user_id)
     if type(userData or reviewList)==str:
         return jsonify({"message" : "Something went wrong at the server! Try again."})
-    return jsonify({"userDetails" : userData, "reviews_count" : str(len(userData)), "reviews" : reviewList})
+    return jsonify({"userDetails" : userData, "reviews_count" : str(len(reviewList)), "reviews" : reviewList})
 
 
 if __name__ == '__main__':
