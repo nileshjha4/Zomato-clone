@@ -448,13 +448,13 @@ def addReview():
     except KeyError :
         return jsonify({"message" : "Inappropriate request! Try again."})
     try:
-        reviewResp = requests.request("POST", url, data=json.dumps(requestPayload), headers=headers)
+        reviewResp = requests.request("POST", dataUrl, data=json.dumps(reviewPayload), headers=dataHeaders)
         print(reviewResp)
     except Exception as e:
         print(type(e))
         print(e)
         return jsonify({"message" : "Something went wrong at the server! Try again."})
-    return jsonify({"message" : "review added"})
+    return jsonify({"message" : "Review added"})
 
 
 if __name__ == '__main__':
