@@ -369,14 +369,14 @@ def zomatoLogout():
 def changePassword():
     userCredentials = request.get_json()
     try:    
-        Authorization = "Bearer " + logoutToken['auth_token']
+        Authorization = "Bearer " + userCredentials['auth_token']
         headers = {
             "Content-Type": "application/json",
             "Authorization": Authorization
         }
         print(headers)
         passwordPayload = {
-            "old_password" : userCredentials['old_password']
+            "old_password" : userCredentials['old_password'],
             "new_password" : userCredentials['new_password']
         }
         changePasswordResp = requests.request("POST", changePasswordUrl, data = json.dumps(passwordPayload), headers=headers)
