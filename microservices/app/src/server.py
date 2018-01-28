@@ -283,7 +283,7 @@ def getUserData(user_id):
                     }
                 }
             }
-        userData = requests.request("POST", url, data=json.dumps(userDataPayload), headers=dataHeaders).json()
+        userData = requests.request("POST", dataUrl, data=json.dumps(userDataPayload), headers=dataHeaders).json()
         print(userData)
     except Exception as e:
         print(type(e))
