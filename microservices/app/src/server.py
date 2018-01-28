@@ -384,7 +384,6 @@ def changePassword():
     except KeyError :
         return jsonify({"message" : "Inappropriate request! Try again."})
     except Exception as e :
-        except Exception as e:
         print(type(e))
         print(e)
         return jsonify({"message" : "Something went wrong at the server! Try again."})
