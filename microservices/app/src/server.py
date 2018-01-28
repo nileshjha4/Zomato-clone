@@ -4,6 +4,7 @@ import requests
 import json
 import geocoder
 
+
 signupUrl = "https://auth.butane33.hasura-app.io/v1/signup"
 loginUrl = "https://auth.butane33.hasura-app.io/v1/login"
 dataUrl = "https://data.butane33.hasura-app.io/v1/query"
@@ -15,6 +16,7 @@ changePasswordUrl ="https://auth.butane33.hasura-app.io/v1/providers/username/ch
 headers = {
     "Content-Type": "application/json"
 }
+
 
 dataHeaders= {
     "Content-Type": "application/json",
@@ -327,7 +329,6 @@ def zomatoSignup():
                 ]
                 }
             }
-        # Make the query and store response in resp
         dataResp = requests.request("POST", dataUrl, data=json.dumps(userDataPayload), headers=dataHeaders).json()
         print(dataResp)
         return jsonify({"auth_token" : signupResp['auth_token']})
@@ -379,7 +380,7 @@ def changePassword():
             "old_password" : userCredentials['old_password'],
             "new_password" : userCredentials['new_password']
         }
-        changePasswordResp = requests.request("POST", changePasswordUrl, data = json.dumps(passwordPayload), headers=headers)
+        changePasswordResp = requests.request("POST", changePasswordUrl, data = json.dumps(passwordPayload), headers=headers).json()
         print(changePasswordResp)
     except KeyError :
         return jsonify({"message" : "Inappropriate request! Try again."})
