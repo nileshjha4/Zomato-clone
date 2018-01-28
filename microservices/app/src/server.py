@@ -427,7 +427,7 @@ def getUser():
     return jsonify({"userDetails" : userData, "reviews_count" : str(len(reviewList)), "reviews" : reviewList})
 
 
-@app.route('/addreview/')
+@app.route('/addreview/',methods=['POST'])
 def addReview():
     reviewData = request.get_json()
     try:
