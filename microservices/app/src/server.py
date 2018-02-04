@@ -435,7 +435,7 @@ def getRestaurant():
     restaurantMenuList = getRestaurantMenu(restaurant_id)
     if type(restaurantData or reviewList or cuisineList or restaurantViewList or restaurantMenuList)==str:
         return jsonify({"message" : "Something went wrong at the server! Try again."})
-    return jsonify({"restaurant" : {"restaurant_details" : restaurantData , "reviews_count" : str(len(reviewList)), "reviews" : reviewList, "menu_count" :  str(len(restaurantMenuList)), "menu" : restaurantMenuList, "restaurant_view_count" : str(len(restaurantViewList)), "restaurant_view" : restaurantViewList, "cuisine_count" : str(len(cuisineList)), "cuisine" : cuisineList }})
+    return jsonify({"restaurant" : ["restaurant_details" : restaurantData , "reviews_count" : str(len(reviewList)), "reviews" : reviewList, "menu_count" :  str(len(restaurantMenuList)), "menu" : restaurantMenuList, "restaurant_view_count" : str(len(restaurantViewList)), "restaurant_view" : restaurantViewList, "cuisine_count" : str(len(cuisineList)), "cuisine" : cuisineList ]})
 
 
 @app.route('/getuser/', methods=['POST'])
