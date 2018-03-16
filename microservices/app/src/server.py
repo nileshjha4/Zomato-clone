@@ -4,13 +4,16 @@ import requests
 import json
 import geocoder
 
+ clusterName  = "butane33"
 
-signupUrl = "https://auth.butane33.hasura-app.io/v1/signup"
-loginUrl = "https://auth.butane33.hasura-app.io/v1/login"
-dataUrl = "https://data.butane33.hasura-app.io/v1/query"
-logoutUrl = "https://auth.butane33.hasura-app.io/v1/user/logout"
-userInfoUrl = "https://auth.butane33.hasura-app.io/v1/user/info"
-changePasswordUrl ="https://auth.butane33.hasura-app.io/v1/providers/username/change-password"
+ adminToken = "c562a1e8e3143c53f251d795578bb1359ce196c4b961cac6"
+
+signupUrl = "https://auth."+ clusterName +".hasura-app.io/v1/signup"
+loginUrl = "https://auth."+ clusterName +".hasura-app.io/v1/login"
+dataUrl = "https://data."+ clusterName +".hasura-app.io/v1/query"
+logoutUrl = "https://auth."+ clusterName +".hasura-app.io/v1/user/logout"
+userInfoUrl = "https://auth."+ clusterName +".hasura-app.io/v1/user/info"
+changePasswordUrl ="https://auth."+ clusterName +".hasura-app.io/v1/providers/username/change-password"
 
 
 headers = {
@@ -20,7 +23,7 @@ headers = {
 
 dataHeaders= {
     "Content-Type": "application/json",
-    "Authorization": "Bearer c562a1e8e3143c53f251d795578bb1359ce196c4b961cac6"
+    "Authorization": "Bearer " + adminToken
 }
 
 

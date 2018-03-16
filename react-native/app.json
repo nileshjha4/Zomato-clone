@@ -1,0 +1,11 @@
+{
+  "expo": {
+	"name": "T73-Tomato",
+    "icon": "./asset/tomato.png",
+    "version": "1.0.0",
+    "sdkVersion": "23.0.0",
+    "android": {
+      "package": "com.t73.tomato"
+    }
+  }
+}
