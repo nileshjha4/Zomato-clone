@@ -4,9 +4,8 @@ import requests
 import json
 import geocoder
 
- clusterName  = "butane33"
-
- adminToken = "c562a1e8e3143c53f251d795578bb1359ce196c4b961cac6"
+clusterName + "butane33"
+adminToken = "c562a1e8e3143c53f251d795578bb1359ce196c4b961cac6"
 
 signupUrl = "https://auth."+ clusterName +".hasura-app.io/v1/signup"
 loginUrl = "https://auth."+ clusterName +".hasura-app.io/v1/login"
